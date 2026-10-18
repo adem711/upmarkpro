@@ -70,11 +70,19 @@ def wa_icon(lang):
     return (f'<a href="{WA}" target="_blank" rel="noopener" class="nav-wa" aria-label="{attr(NAV[lang]["wa_aria"])}">'
             f'<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="{SH["wa_path"]}"/></svg></a>')
 
+def pills(lang, page):
+    return ''.join(f'<a class="mob-pill{" on" if l == lang else ""}" href="{url(page, l)}" hreflang="{l}" lang="{l}"' + (' aria-current="true"' if l == lang else '') + f'>{l.upper()}</a>' for l in LANGS)
+
 def nav(lang, page):
-    n = NAV[lang]
+    n = NAV[lang]; dr = DRAWER[lang]
     items = ''.join(f'<li><a href="{url(k, lang)}"{" aria-current=\"page\"" if page == k else ""}>{n[k]}</a></li>' for k in ('services', 'work', 'about', 'contact'))
-    cta = url('contact', lang) + ('#offerta' if lang == 'it' else '')
-    mob = ''.join(f'<a href="{url(k, lang)}" onclick="closeMob()"{" aria-current=\"page\"" if page == k else ""}>{n[k]}</a>' for k in ('services', 'work', 'about', 'contact'))
+    cta = url('contact', lang) + '#offerta'
+    mob = ''.join(
+        f'<li><a class="mob-link" href="{url(k, lang)}" onclick="closeMob()"{" aria-current=\"page\"" if page == k else ""}>'
+        f'<span class="mob-idx">0{i} /</span><span>{n[k]}</span></a></li>'
+        for i, k in enumerate(('services', 'work', 'about', 'contact'), 1))
+    wa_svg = f'<svg width="22" height="22" viewBox="0 0 24 24" fill="#25D366" aria-hidden="true"><path d="{SH["wa_path"]}"/></svg>'
+    tel_svg = f'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{SH["phone_path"]}"/></svg>'
     return f'''<!-- NAV -->
 <nav id="nav">
   <div class="nav-in">
@@ -97,13 +105,19 @@ def nav(lang, page):
         {switcher(lang, page)}
         {wa_icon(lang)}
       </div>
-      <button class="ham" id="ham" aria-label="{attr(n['menu'])}"><span></span><span></span><span></span></button>
+      <button class="ham" id="ham" type="button" aria-label="{attr(dr['menu'])}" aria-expanded="false" aria-controls="mob-nav" data-label-open="{attr(dr['menu'])}" data-label-close="{attr(dr['close'])}"><span></span><span></span><span></span></button>
     </div>
   </div>
 </nav>
-<div id="mob-nav">
-  {mob}
-  <a href="{cta}" onclick="closeMob()" style="color:var(--lime)">{n['cta']}</a>
+<div id="mob-nav" role="dialog" aria-modal="true" aria-label="{attr(dr['menu'])}">
+  <ul class="mob-list">{mob}</ul>
+  <div class="mob-lang" role="group" aria-label="{attr(dr['lang'])}">{pills(lang, page)}</div>
+  <div class="mob-contact">
+    <a class="mob-btn mob-wa" href="{WA}" target="_blank" rel="noopener">{wa_svg}<span>{dr['wa']}</span></a>
+    <a class="mob-btn mob-tel" href="tel:+393882576789">{tel_svg}<span>{dr['call']}</span></a>
+    <a class="mob-mail" href="mailto:hello@upmarkpro.com">hello@upmarkpro.com</a>
+  </div>
+  <a href="{cta}" class="btn-lime mob-cta" onclick="closeMob()">{dr['cta']}</a>
 </div>
 '''
 
@@ -145,19 +159,16 @@ def footer(lang, page):
 </footer>
 '''
 
-def dock(lang):
+def dock(lang, page):
     d = DOCK[lang]
-    return f'''<!-- Mobile quick-action dock -->
+    quote = '#contact-form' if page == 'contact' else url('contact', lang)
+    return f'''<!-- Mobile conversion bar -->
 <nav class="m-dock" id="m-dock" aria-label="{attr(d['aria'])}">
-  <a href="tel:+393882576789" class="m-dock-btn m-dock-call">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{SH['phone_path']}"/></svg>
-    <span>{d['call']}</span>
+  <a href="{WA}" target="_blank" rel="noopener" class="m-dock-wa">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="{SH['wa_path']}"/></svg>
+    <span class="m-dock-wa-txt"><b>WhatsApp</b><small><i class="m-dock-live" aria-hidden="true"></i>{esc(d['replies'])}</small></span>
   </a>
-  <a href="{WA}" target="_blank" rel="noopener" class="m-dock-btn m-dock-wa">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="{SH['wa_path']}"/></svg>
-    <span>WhatsApp</span>
-    <i class="m-dock-live" aria-hidden="true"></i>
-  </a>
+  <a href="{quote}" class="m-dock-cta">{esc(d['quote'])}</a>
 </nav>
 '''
 
@@ -184,7 +195,7 @@ def head(lang, page, m, ld=False):
     kw = f'  <meta name="keywords" content="{attr(m["keywords"])}">\n' if m.get('keywords') else ''
     return f'''<head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{esc(title)}</title>
   <meta name="description" content="{attr(desc)}">
   <!-- Favicon & theme -->
@@ -232,7 +243,7 @@ def page_html(lang, page, main, m, ld=False, concepts=False, body_class=''):
 </main>
 
 {footer(lang, page)}
-{dock(lang)}
+{dock(lang, page)}
 <!-- Back to top -->
 {bt}
 
@@ -324,20 +335,40 @@ def services_full(lang):
 </section>
 '''
 
+WHO_ICONS = {  # lightweight inline icons (stroke = currentColor)
+    'trades': '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+    'practices': '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
+    'online': '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+}
+WHO_ACCENT = ['who-lime', 'who-blue', 'who-lime']
+
 def per_chi(lang):
     d = PER_CHI[lang]
-    cards = '\n'.join(f'''    <div class="rc">
-      <h3 class="rc-title">{esc(t)}</h3>
-      <p class="rc-desc">{esc(p)}</p>
-    </div>''' for t, p in d['cards'])
+    cards = []
+    for i, c in enumerate(d['cards']):
+        tags = chr(10).join(f'          <li class="who-tag">{esc(t)}</li>' for t in c['tags'])
+        cards.append(f'''    <article class="who-card {WHO_ACCENT[i % 3]} rev{delay(i)}">
+      <header class="who-head">
+        <span class="who-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{WHO_ICONS[c['icon']]}</svg></span>
+        <span class="who-badge">{esc(c['badge'])}</span>
+      </header>
+      <h3 class="who-title">{esc(c['title'])}</h3>
+      <ul class="who-tags" role="list" aria-label="{attr(c['title'])}">
+{tags}
+      </ul>
+      <div class="who-outcome">
+        <span class="who-outcome-label">{esc(c['outcome_label'])}</span>
+        <p>{esc(c['outcome_desc'])}</p>
+      </div>
+    </article>''')
     return f'''<!-- WHO I WORK FOR -->
 <section id="per-chi" aria-label="{attr(d['aria'])}">
   <div class="rs-header">
     <h2 class="rs-header-label">{esc(d['label'])}</h2>
     <div class="rs-header-line"></div>
   </div>
-  <div class="promise-grid">
-{cards}
+  <div class="who-grid">
+{chr(10).join(cards)}
   </div>
 </section>
 '''
@@ -529,7 +560,7 @@ def offer_card(lang):
 
 # ───────────────────────── pages ─────────────────────────
 def build_home(lang):
-    parts = [fix_links(partial(lang, n), lang) for n in ('hero', 'promise', 'teardown')]
+    parts = [fix_links(partial(lang, n), lang) for n in ('hero', 'promise')]
     if has_partial(lang, 'kinetic'): parts.append(partial(lang, 'kinetic'))
     parts += [services_summary(lang), work_featured(lang), about_teaser(lang), cta_banner(lang)]
     return page_html(lang, 'home', '\n'.join(parts), META['home'][lang], ld=True, concepts=True)

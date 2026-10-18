@@ -84,9 +84,14 @@ FOOT = {
                cols=('Servizi', 'Navigazione', 'Contatti'), copy='© 2026 Upmarkpro. Tutti i diritti riservati.', privacy='Privacy', cookies='Cookie', aria='Piè di pagina', home='Home'),
 }
 DOCK = {
-    'en': dict(aria='Quick contact', call='Call'),
-    'fr': dict(aria='Contact rapide', call='Appeler'),
-    'it': dict(aria='Contatto rapido', call='Chiama'),
+    'en': dict(aria='Quick contact', replies='Replies within 24h', quote='Get a quote'),
+    'fr': dict(aria='Contact rapide', replies='Réponse sous 24 h', quote='Demander un devis'),
+    'it': dict(aria='Contatto rapido', replies='Risposta entro 24 ore', quote='Richiedi un preventivo'),
+}
+DRAWER = {
+    'en': dict(lang='Language', wa='WhatsApp', call='Call', mail='Email', cta='Get a free audit →', close='Close menu', menu='Menu'),
+    'fr': dict(lang='Langue', wa='WhatsApp', call='Appeler', mail='Email', cta='Audit gratuit →', close='Fermer le menu', menu='Menu'),
+    'it': dict(lang='Lingua', wa='WhatsApp', call='Chiama', mail='Email', cta='Analisi gratuita →', close='Chiudi il menu', menu='Menu'),
 }
 BACKTOP = {'en': 'Back to top', 'fr': 'Retour en haut', 'it': 'Torna su'}
 
@@ -171,17 +176,38 @@ SERVICES_UI = {
 
 PER_CHI = {
     'en': dict(label='/ Who I work for', aria='Who I work for', cards=[
-        ('Local businesses', 'Plumbers, electricians, tilers, painters, drywallers, window fitters, HVAC, gardeners, restaurants and bars, dental practices, private schools and language centres.'),
-        ('Practices and companies', 'Solar companies, construction firms, architecture studios, interior designers.'),
-        ('Online and freelance', 'Shopify e-commerce stores, marketers and independent professionals.')]),
+        dict(icon='trades', badge='01 / LOCAL', title='Local businesses',
+             tags=['Plumbers', 'Electricians', 'Tilers', 'Painters', 'Drywallers', 'Window fitters', 'HVAC', 'Gardeners', 'Restaurants & bars', 'Dental practices', 'Private schools', 'Language centres'],
+             outcome_label='Primary focus', outcome_desc='Tap-to-call buttons, Google Maps visibility and quote requests from mobile.'),
+        dict(icon='practices', badge='02 / FIRMS', title='Practices & firms',
+             tags=['Solar companies', 'Construction firms', 'Architecture studios', 'Interior designers'],
+             outcome_label='Primary focus', outcome_desc='A portfolio that shows your work, authority branding and qualified enquiries.'),
+        dict(icon='online', badge='03 / DIGITAL', title='Online & freelance',
+             tags=['Shopify e-commerce stores', 'Marketers', 'Independent professionals'],
+             outcome_label='Primary focus', outcome_desc='Smooth checkout, fast landing pages and simple lead capture.'),
+    ]),
     'fr': dict(label='/ Pour qui je travaille', aria='Pour qui je travaille', cards=[
-        ('Entreprises locales', 'Plombiers, électriciens, carreleurs, peintres, plaquistes, menuisiers, climatisation, jardiniers, restaurants et bars, cabinets dentaires, écoles privées et centres de langues.'),
-        ('Cabinets et entreprises', "Entreprises de photovoltaïque, entreprises du bâtiment, cabinets d'architecture, designers d'intérieur."),
-        ('En ligne et freelances', 'Boutiques e-commerce Shopify, marketeurs et indépendants.')]),
+        dict(icon='trades', badge='01 / LOCAL', title='Entreprises locales',
+             tags=['Plombiers', 'Électriciens', 'Carreleurs', 'Peintres', 'Plaquistes', 'Menuisiers', 'Climatisation', 'Jardiniers', 'Restaurants et bars', 'Cabinets dentaires', 'Écoles privées', 'Centres de langues'],
+             outcome_label='Priorité', outcome_desc='Appel en un geste, visibilité sur Google Maps et demandes de devis depuis le mobile.'),
+        dict(icon='practices', badge='02 / CABINETS', title='Cabinets et entreprises',
+             tags=['Entreprises de photovoltaïque', 'Entreprises du bâtiment', "Cabinets d'architecture", "Designers d'intérieur"],
+             outcome_label='Priorité', outcome_desc="Un portfolio qui valorise vos réalisations, une image d'autorité et des demandes qualifiées."),
+        dict(icon='online', badge='03 / EN LIGNE', title='En ligne et freelances',
+             tags=['Boutiques e-commerce Shopify', 'Marketeurs', 'Indépendants'],
+             outcome_label='Priorité', outcome_desc="Un paiement fluide, des pages d'atterrissage rapides et une capture de contacts simple."),
+    ]),
     'it': dict(label='/ Per chi lavoro', aria='Per chi lavoro', cards=[
-        ('Attività locali', 'Idraulici, elettricisti, piastrellisti, imbianchini, cartongessisti, serramentisti, climatizzazione, giardinieri, ristoranti e bar, studi dentistici, scuole private e centri linguistici.'),
-        ('Studi e imprese', 'Aziende di fotovoltaico, imprese edili, studi di architettura, interior designer.'),
-        ('Online e freelance', 'Negozi e-commerce su Shopify, marketer e professionisti indipendenti.')]),
+        dict(icon='trades', badge='01 / LOCALE', title='Attività locali',
+             tags=['Idraulici', 'Elettricisti', 'Piastrellisti', 'Imbianchini', 'Cartongessisti', 'Serramentisti', 'Climatizzazione', 'Giardinieri', 'Ristoranti e bar', 'Studi dentistici', 'Scuole private', 'Centri linguistici'],
+             outcome_label='Obiettivo principale', outcome_desc='Chiamata in un tocco, visibilità su Google Maps e richieste di preventivo da mobile.'),
+        dict(icon='practices', badge='02 / STUDI', title='Studi e imprese',
+             tags=['Aziende di fotovoltaico', 'Imprese edili', 'Studi di architettura', 'Interior designer'],
+             outcome_label='Obiettivo principale', outcome_desc="Un portfolio che valorizza i tuoi lavori, un'immagine autorevole e richieste qualificate."),
+        dict(icon='online', badge='03 / ONLINE', title='Online e freelance',
+             tags=['Negozi e-commerce su Shopify', 'Marketer', 'Professionisti indipendenti'],
+             outcome_label='Obiettivo principale', outcome_desc='Checkout fluido, landing page veloci e raccolta contatti semplice.'),
+    ]),
 }
 
 # ───────────────────────── concept projects ─────────────────────────

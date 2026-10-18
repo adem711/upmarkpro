@@ -1,15 +1,29 @@
 const currentLang = document.documentElement.lang || 'en';
 
-/* ── Mobile nav ── */
-document.getElementById('ham').addEventListener('click', () => {
-  const m = document.getElementById('mob-nav');
-  m.classList.toggle('open');
-  document.body.style.overflow = m.classList.contains('open') ? 'hidden' : '';
-});
-function closeMob() {
-  document.getElementById('mob-nav').classList.remove('open');
-  document.body.style.overflow = '';
+/* ── Mobile nav drawer ── */
+const ham = document.getElementById('ham');
+const mobNav = document.getElementById('mob-nav');
+function setMenu(open) {
+  if (!ham || !mobNav) return;
+  mobNav.classList.toggle('open', open);
+  ham.classList.toggle('open', open);
+  ham.setAttribute('aria-expanded', String(open));
+  ham.setAttribute('aria-label', open ? ham.dataset.labelClose : ham.dataset.labelOpen);
+  document.body.classList.toggle('menu-open', open);
+  document.body.style.overflow = open ? 'hidden' : '';           // lock the page behind the drawer
+  if (open) setTimeout(() => { const f = mobNav.querySelector('.mob-link'); if (f) f.focus({ preventScroll: true }); }, 60);
 }
+if (ham) ham.addEventListener('click', () => setMenu(!mobNav.classList.contains('open')));
+function closeMob() { setMenu(false); }
+document.addEventListener('keydown', e => {
+  if (!mobNav || !mobNav.classList.contains('open')) return;
+  if (e.key === 'Escape') { setMenu(false); ham.focus(); return; }
+  if (e.key !== 'Tab') return;                                    // keep keyboard focus inside the open drawer
+  const f = [ham, ...mobNav.querySelectorAll('a[href]')], first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+window.addEventListener('resize', () => { if (window.innerWidth > 680) setMenu(false); });
 
 /* ── Scroll reveal ── */
 const obs = new IntersectionObserver(entries => {
@@ -430,7 +444,10 @@ if (calcExport) calcExport.addEventListener('click', () => {
 
     const base = `/assets/projects/${p.id}/`;
     if (state.device === 'desktop') {
-      dImg.alt = S.alt(p.title, S.desk); dImg.src = base + 'desktop-full.webp';
+      dImg.alt = S.alt(p.title, S.desk);
+      dImg.sizes = '(max-width: 680px) 50vw, 700px';   // phones show it ~350px wide: the 640px file is plenty
+      dImg.srcset = `${base}desktop-full-640.webp 640w, ${base}desktop-full.webp 1000w`;
+      dImg.src = base + 'desktop-full.webp';
       dCanvas.querySelectorAll('.sr-pin').forEach(n => n.remove());
       dCanvas.insertAdjacentHTML('beforeend', p.d.map(q => pinHTML(q.t, q.x, q.y)).join(''));
       dCanvas.parentElement.scrollTop = 0;
@@ -490,47 +507,6 @@ if (calcExport) calcExport.addEventListener('click', () => {
   });
 
   fill();
-})();
-
-/* ── Before / After slider: mouse + touch drag, keyboard, one intro sweep when first seen ── */
-(function initBeforeAfter() {
-  const ba = document.getElementById('ba');
-  if (!ba) return;
-  const stage = ba.querySelector('.ba-stage'), handle = ba.querySelector('.ba-handle');
-  let pos = 50, dragging = false;
-  const set = v => {
-    pos = Math.max(0, Math.min(100, v));
-    stage.style.setProperty('--pos', pos + '%');
-    handle.setAttribute('aria-valuenow', String(Math.round(pos)));
-  };
-  const fromEvent = e => { const r = stage.getBoundingClientRect(); set(((e.clientX - r.left) / r.width) * 100); };
-  stage.addEventListener('pointerdown', e => {
-    if (e.button !== undefined && e.button !== 0) return;
-    dragging = true; stage.setPointerCapture(e.pointerId); stage.classList.add('drag'); fromEvent(e);
-  });
-  stage.addEventListener('pointermove', e => { if (dragging) fromEvent(e); });
-  const end = () => { dragging = false; stage.classList.remove('drag'); };
-  stage.addEventListener('pointerup', end);
-  stage.addEventListener('pointercancel', end);
-  handle.addEventListener('keydown', e => {
-    const step = e.shiftKey ? 15 : 5;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') set(pos - step);
-    else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') set(pos + step);
-    else if (e.key === 'Home') set(0);
-    else if (e.key === 'End') set(100);
-    else return;
-    e.preventDefault();
-  });
-  if (hasGsap && !reducedMotion) {
-    const o = { v: 94 };
-    set(o.v);
-    new IntersectionObserver((entries, ob) => {
-      if (!entries[0].isIntersecting) return;
-      ob.disconnect();
-      if (dragging) return;
-      gsap.to(o, { v: 50, duration: 1.4, ease: 'power3.inOut', onUpdate: () => { if (!dragging) set(o.v); } });
-    }, { threshold: 0.5 }).observe(stage);
-  } else set(50);
 })();
 
 /* ── Hero niche switcher: cross-fades the hero mockup to the real capture of the chosen niche ── */
