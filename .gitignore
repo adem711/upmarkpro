@@ -3,3 +3,6 @@
 Upmarkpro Website/
 
 .vercel
+
+__pycache__/
+*.pyc

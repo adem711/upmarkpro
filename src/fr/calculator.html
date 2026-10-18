@@ -1,0 +1,64 @@
+<section id="calculator" aria-label="Missed revenue calculator">
+  <div class="container">
+    <div class="calc-card rev">
+      <div class="calc-intro">
+        <span class="eyebrow">/ Outil gratuit</span>
+        <h2>Que vous coûte un site lent ?</h2>
+        <p>Chaque appel manqué est un chantier parti chez un concurrent. Déplacez les curseurs pour voir ce que ça représente.</p>
+      </div>
+      <div class="calc-body">
+        <div class="calc-inputs">
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-calls">Appels manqués par semaine</label>
+              <span class="calc-field-val" id="calc-calls-val">5</span>
+            </div>
+            <input type="range" id="calc-calls" min="0" max="20" step="1" value="5">
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-value">Valeur moyenne par chantier</label>
+              <span class="calc-field-val" id="calc-value-val">250 €</span>
+            </div>
+            <input type="range" id="calc-value" min="50" max="2000" step="10" value="250">
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-speed">Temps de chargement mobile</label>
+              <span class="calc-field-val" id="calc-speed-val">4,5 s</span>
+            </div>
+            <input type="range" id="calc-speed" min="1" max="8" step="0.5" value="4.5">
+          </div>
+        </div>
+        <div class="calc-viz" aria-live="polite">
+          <p class="calc-viz-title">Visiteurs qui restent sur votre site</p>
+          <div class="calc-bar">
+            <span class="calc-bar-label">Votre site aujourd'hui</span>
+            <div class="calc-bar-track"><div class="calc-bar-fill" id="calc-bar-you" style="width:57%"></div></div>
+            <span class="calc-bar-val" id="calc-bar-you-val">57 %</span>
+          </div>
+          <div class="calc-bar">
+            <span class="calc-bar-label">Un site rapide (1,5 s)</span>
+            <div class="calc-bar-track"><div class="calc-bar-fill fast" id="calc-bar-fast" style="width:92%"></div></div>
+            <span class="calc-bar-val" id="calc-bar-fast-val">92 %</span>
+          </div>
+          <p class="calc-viz-note">Modèle hypothétique, pas une mesure : suppose qu'environ 15 % des visiteurs mobiles partent à chaque seconde au-delà de la première.</p>
+        </div>
+        <div class="calc-output">
+          <span class="calc-tag">Exemple</span>
+          <div class="calc-stat">
+            <span class="calc-stat-label">Perdu par mois</span>
+            <span class="calc-stat-val lime" id="calc-monthly">2 165 €</span>
+          </div>
+          <div class="calc-stat">
+            <span class="calc-stat-label">Perdu par an</span>
+            <span class="calc-stat-val blue" id="calc-annual">25 980 €</span>
+          </div>
+          <a href="#contact" class="btn-lime calc-cta" data-magnetic>Corriger ça →</a>
+        </div>
+        <p class="calc-note">Estimation indicative : suppose qu'environ 4 appels manqués sur 10 seraient devenus un travail.</p>
+        <button type="button" id="calc-export" class="btn-outline calc-export">Envoyer l'audit sur WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</section>

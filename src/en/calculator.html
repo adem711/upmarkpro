@@ -1,0 +1,64 @@
+<section id="calculator" aria-label="Missed revenue calculator">
+  <div class="container">
+    <div class="calc-card rev">
+      <div class="calc-intro">
+        <span class="eyebrow">/ Free tool</span>
+        <h2>What's a slow website costing you?</h2>
+        <p>Every missed call is a job that went to a competitor instead. Drag the sliders to see what it adds up to.</p>
+      </div>
+      <div class="calc-body">
+        <div class="calc-inputs">
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-calls">Missed calls per week</label>
+              <span class="calc-field-val" id="calc-calls-val">5</span>
+            </div>
+            <input type="range" id="calc-calls" min="0" max="20" step="1" value="5">
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-value">Average job value</label>
+              <span class="calc-field-val" id="calc-value-val">€250</span>
+            </div>
+            <input type="range" id="calc-value" min="50" max="2000" step="10" value="250">
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-speed">Mobile load time</label>
+              <span class="calc-field-val" id="calc-speed-val">4.5 s</span>
+            </div>
+            <input type="range" id="calc-speed" min="1" max="8" step="0.5" value="4.5">
+          </div>
+        </div>
+        <div class="calc-viz" aria-live="polite">
+          <p class="calc-viz-title">Visitors who stay on your site</p>
+          <div class="calc-bar">
+            <span class="calc-bar-label">Your site today</span>
+            <div class="calc-bar-track"><div class="calc-bar-fill" id="calc-bar-you" style="width:57%"></div></div>
+            <span class="calc-bar-val" id="calc-bar-you-val">57%</span>
+          </div>
+          <div class="calc-bar">
+            <span class="calc-bar-label">A fast site (1.5 s)</span>
+            <div class="calc-bar-track"><div class="calc-bar-fill fast" id="calc-bar-fast" style="width:92%"></div></div>
+            <span class="calc-bar-val" id="calc-bar-fast-val">92%</span>
+          </div>
+          <p class="calc-viz-note">Hypothetical model, not a measurement: assumes about 15% of mobile visitors leave for every second beyond the first.</p>
+        </div>
+        <div class="calc-output">
+          <span class="calc-tag">Example</span>
+          <div class="calc-stat">
+            <span class="calc-stat-label">Lost per month</span>
+            <span class="calc-stat-val lime" id="calc-monthly">€2,165</span>
+          </div>
+          <div class="calc-stat">
+            <span class="calc-stat-label">Lost per year</span>
+            <span class="calc-stat-val blue" id="calc-annual">€25,980</span>
+          </div>
+          <a href="#contact" class="btn-lime calc-cta" data-magnetic>Fix this →</a>
+        </div>
+        <p class="calc-note">Rough estimate: assumes about 4 in 10 missed calls would have become a job.</p>
+        <button type="button" id="calc-export" class="btn-outline calc-export">Export audit to WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</section>

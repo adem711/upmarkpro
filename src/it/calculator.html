@@ -1,0 +1,64 @@
+<section id="calculator" aria-label="Calcolatore delle chiamate perse">
+  <div class="container">
+    <div class="calc-card rev">
+      <div class="calc-intro">
+        <span class="eyebrow">/ Strumento gratuito</span>
+        <h2>Quanto ti costano le chiamate perse?</h2>
+        <p>Ogni chiamata persa può diventare un lavoro per un concorrente. Muovi i cursori per vedere un esempio.</p>
+      </div>
+      <div class="calc-body">
+        <div class="calc-inputs">
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-calls">Chiamate perse a settimana</label>
+              <span class="calc-field-val" id="calc-calls-val">5</span>
+            </div>
+            <input type="range" id="calc-calls" min="0" max="20" step="1" value="5">
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-value">Valore medio di un lavoro</label>
+              <span class="calc-field-val" id="calc-value-val">250 €</span>
+            </div>
+            <input type="range" id="calc-value" min="50" max="2000" step="10" value="250">
+          </div>
+          <div class="calc-field">
+            <div class="calc-field-top">
+              <label for="calc-speed">Tempo di caricamento da telefono</label>
+              <span class="calc-field-val" id="calc-speed-val">4,5 s</span>
+            </div>
+            <input type="range" id="calc-speed" min="1" max="8" step="0.5" value="4.5">
+          </div>
+        </div>
+        <div class="calc-viz" aria-live="polite">
+          <p class="calc-viz-title">Visitatori che restano sul tuo sito</p>
+          <div class="calc-bar">
+            <span class="calc-bar-label">Il tuo sito oggi</span>
+            <div class="calc-bar-track"><div class="calc-bar-fill" id="calc-bar-you" style="width:57%"></div></div>
+            <span class="calc-bar-val" id="calc-bar-you-val">57%</span>
+          </div>
+          <div class="calc-bar">
+            <span class="calc-bar-label">Un sito veloce (1,5 s)</span>
+            <div class="calc-bar-track"><div class="calc-bar-fill fast" id="calc-bar-fast" style="width:92%"></div></div>
+            <span class="calc-bar-val" id="calc-bar-fast-val">92%</span>
+          </div>
+          <p class="calc-viz-note">Modello ipotetico, non una misura: ipotizza che circa il 15% dei visitatori da telefono se ne vada per ogni secondo oltre il primo.</p>
+        </div>
+        <div class="calc-output">
+          <span class="calc-tag">Esempio</span>
+          <div class="calc-stat">
+            <span class="calc-stat-label">Perso al mese</span>
+            <span class="calc-stat-val lime" id="calc-monthly">2.165 €</span>
+          </div>
+          <div class="calc-stat">
+            <span class="calc-stat-label">Perso all'anno</span>
+            <span class="calc-stat-val blue" id="calc-annual">25.980 €</span>
+          </div>
+          <a href="#offerta" class="btn-lime calc-cta" data-magnetic>Ricevi l'analisi gratuita →</a>
+        </div>
+        <p class="calc-note">Calcolo indicativo: ipotizza che circa 4 chiamate perse su 10 sarebbero diventate un lavoro.</p>
+        <button type="button" id="calc-export" class="btn-outline calc-export">Invia l'audit su WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</section>
