@@ -19,14 +19,20 @@ the generated `index.html` files are committed.
 
 ## Editing
 
-The page HTML is generated. Edit the sources, then rebuild:
+The page HTML is generated. Edit the sources, then rebuild (needs Python 3 and Node for the esbuild minifier):
 
     python build.py
 
 - `src/content.py`  page URLs, meta tags and copy for the new components (services, work cards, FAQ, offer, CTA, nav, footer)
-- `src/<lang>/*.html`  finished sections (hero, promise, before/after, calculator, bio + process, contact form)
+- `src/<lang>/*.html`  finished sections (hero, promise, calculator, bio + process, contact form)
 - `src/legal_content.py`  privacy notice and cookie page (draft)
 - `src/shared.json`  icons and shared fragments
-- `assets/site.css`, `assets/site.js`  shared by every page; `assets/concepts.js` is generated
+- `src/site.css`, `src/site.js`  shared by every page (source, not served)
 
-`build.py` also writes `sitemap.xml`. Do not edit the generated `index.html` files by hand.
+`build.py` writes, for every language:
+
+- every page, with the minified CSS **inlined** in `<head>` (no render-blocking request)
+- `assets/site.js` (minified, loaded with `defer` and a `?v=` fingerprint) and `assets/concepts.js`
+- `sitemap.xml`, `llms.txt`, `404.html` (a real 404 page also stops Cloudflare Pages from answering unknown URLs with the home page) and `_headers` (long cache lifetimes for fonts, vendor scripts and the fingerprinted JS)
+
+Do not edit the generated `index.html` files, `assets/site.js` or `assets/concepts.js` by hand.

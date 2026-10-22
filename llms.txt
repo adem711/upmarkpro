@@ -1,0 +1,36 @@
+# Upmarkpro
+
+> Upmarkpro designs websites, brand identities, Google visibility and Shopify stores for local businesses, professional practices and e-commerce, working remotely with clients across Italy. The site is available in Italian, English and French.
+
+Upmarkpro is run by Adem. The six sites shown in the Work section are concept projects made to demonstrate the approach for real industries; they are not client work and they are not the official websites of the businesses they are based on.
+
+## Italiano
+- [Home](https://upmarkpro.com/it/): Siti web veloci, immagine coordinata e scheda Google per attività locali, studi professionali ed e-commerce. Chiamaci o scrivici su WhatsApp.
+- [Servizi](https://upmarkpro.com/it/servizi/): Pacchetti per siti web da €490, più branding, visibilità su Google e negozi Shopify. Prezzi fissi, concordati prima di iniziare.
+- [Progetti](https://upmarkpro.com/it/progetti/): Sei siti concept per scuole, fotovoltaico, dentisti, edilizia, barbieri ed eventi, realizzati per mostrare il nostro metodo. Passa da desktop a mobile.
+- [Chi siamo](https://upmarkpro.com/it/chi-sono/): Ascolto, strategia, design e consegna: come lavoriamo con le attività locali, più le risposte alle domande più frequenti prima di iniziare.
+- [Contatto](https://upmarkpro.com/it/contatto/): Mandaci il nome della tua attività per un'analisi gratuita di come ti vedono su Google e sul web, oppure raccontaci il progetto. Rispondiamo entro 24 ore.
+
+## English
+- [Home](https://upmarkpro.com/): We design More Calls Websites, brand identities and Shopify stores for local trades — so you outrank competitors, get found and win more work.
+- [Services](https://upmarkpro.com/services/): Website packages from €490, plus brand identity, Google visibility and Shopify stores. Fixed prices, agreed before we start. See what's included.
+- [Work](https://upmarkpro.com/work/): Six concept sites for schools, solar, dental, construction, barbers and events, built to show our approach. Switch between desktop and mobile.
+- [About](https://upmarkpro.com/about/): Listen, strategy, design, delivery: how we work with local businesses, plus answers to the questions people ask before starting a website.
+- [Contact](https://upmarkpro.com/contact/): Send us your business name for a free summary of how you look on Google and the web, or tell us about your project. We reply within 24 hours.
+
+## Français
+- [Accueil](https://upmarkpro.com/fr/): Sites More Calls, identités de marque et boutiques Shopify pour artisans et prestataires locaux. Soyez trouvé et décrochez plus de chantiers.
+- [Services](https://upmarkpro.com/fr/services/): Offres de sites web dès 490 €, plus identité de marque, visibilité Google et boutiques Shopify. Prix fixes, validés avant de démarrer.
+- [Projets](https://upmarkpro.com/fr/projets/): Six sites concept pour écoles, solaire, dentistes, bâtiment, barbiers et événements, créés pour montrer notre méthode. Passez du bureau au mobile.
+- [À propos](https://upmarkpro.com/fr/a-propos/): Écoute, stratégie, design, livraison : notre façon de travailler avec les entreprises locales, et les réponses aux questions qu'on nous pose avant de commencer.
+- [Contact](https://upmarkpro.com/fr/contact/): Envoyez-nous le nom de votre entreprise pour un audit gratuit de votre présence sur Google et le web, ou parlez-nous de votre projet. Réponse sous 24 h.
+
+## Contact
+- [Email](mailto:hello@upmarkpro.com): hello@upmarkpro.com
+- [WhatsApp](https://wa.me/393882576789): +39 388 257 6789
+
+## Optional
+- [Sitemap](https://upmarkpro.com/sitemap.xml): every page with its language alternates
+- [Informativa sulla privacy (IT)](https://upmarkpro.com/it/privacy/): Come Upmarkpro tratta i dati personali di chi visita il sito o scrive tramite il modulo, WhatsApp o email.
+- [Privacy notice (EN)](https://upmarkpro.com/privacy/): How Upmarkpro handles the personal data of people who visit the site or write through the form, WhatsApp or email.
+- [Politique de confidentialité (FR)](https://upmarkpro.com/fr/confidentialite/): Comment Upmarkpro traite les données personnelles des personnes qui visitent le site ou écrivent via le formulaire, WhatsApp ou email.

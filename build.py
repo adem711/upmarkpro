@@ -8,22 +8,29 @@ Reads  src/content.py, src/legal_content.py, src/shared.json and the section par
 Writes <page>/index.html for every page, assets/concepts.js and sitemap.xml.
 The generated files are committed: Cloudflare Pages serves them as-is (no build step on the server).
 """
+import hashlib
 import html as _html
 import json
 import os
 import re
+import shutil
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(ROOT, 'src'))
 from content import *            # noqa: E402,F401,F403
 import legal_content             # noqa: E402
+import pricing_content           # noqa: E402
 
 BASE = 'https://upmarkpro.com'
 WA = 'https://wa.me/393882576789'
 SH = json.load(open(os.path.join(ROOT, 'src', 'shared.json'), encoding='utf-8'))
 PUBLIC_PAGES = ['home', 'services', 'work', 'about', 'contact', 'privacy', 'cookies']
-STALE = ['privacy.html', 'cookies.html', 'fr/confidentialite.html', 'fr/cookies.html', 'it/privacy.html', 'it/cookie.html']
+STALE = ['privacy.html', 'cookies.html', 'fr/confidentialite.html', 'fr/cookies.html', 'it/privacy.html', 'it/cookie.html',
+         'assets/site.css', 'assets/vendor/ScrollTrigger.min.js']
+V = {}          # fingerprints of the versioned assets, filled by build_all()
+CSS_MIN = ''    # minified stylesheet, inlined into every page (no render-blocking request)
 
 
 # ───────────────────────── helpers ─────────────────────────
@@ -187,6 +194,25 @@ def jsonld(lang):
     }
     return '<script type="application/ld+json">\n  ' + json.dumps(data, ensure_ascii=False, indent=2).replace('\n', '\n  ') + '\n  </script>'
 
+def minify(rel):
+    """Minify src/<file> with esbuild (needs Node/npx). Falls back to the unminified source with a warning."""
+    path = os.path.join(ROOT, rel)
+    src = open(path, encoding='utf-8').read()
+    npx = shutil.which('npx') or shutil.which('npx.cmd')
+    if npx:
+        try:
+            r = subprocess.run([npx, '--yes', 'esbuild@0.24.0', path, '--minify', '--legal-comments=none', '--target=chrome95,safari15,firefox95'],
+                               capture_output=True, text=True, encoding='utf-8', timeout=180)
+            if r.returncode == 0 and r.stdout.strip():
+                return r.stdout.strip()
+            print('WARNING: esbuild failed for', rel, r.stderr[:200])
+        except Exception as e:
+            print('WARNING: esbuild unavailable:', e)
+    print('WARNING: using the unminified', rel)
+    return src
+
+def vhash(text): return hashlib.sha1(text.encode('utf-8')).hexdigest()[:8]
+
 def head(lang, page, m, ld=False):
     title = m['title']; desc = m['desc']
     alts = ''.join(f'  <link rel="alternate" hreflang="{l}" href="{BASE}{url(page, l)}">\n' for l in LANGS)
@@ -224,12 +250,13 @@ def head(lang, page, m, ld=False):
   <!-- Fonts (self-hosted) -->
   <link rel="preload" href="/assets/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/hanken-grotesk-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-var.woff2" as="font" type="font/woff2" crossorigin>
 
-  <link rel="stylesheet" href="/assets/site.css">
+  <style>{CSS_MIN}</style>
 </head>'''
 
 def page_html(lang, page, main, m, ld=False, concepts=False, body_class=''):
-    scripts = ['/assets/vendor/gsap.min.js', '/assets/vendor/ScrollTrigger.min.js'] + (['/assets/concepts.js'] if concepts else []) + ['/assets/site.js']
+    scripts = ['/assets/vendor/gsap.min.js?v=3.12.5'] + ([f'/assets/concepts.js?v={V["concepts"]}'] if concepts else []) + [f'/assets/site.js?v={V["site"]}']
     bt = SH['backtop'].replace('aria-label="Back to top"', f'aria-label="{attr(BACKTOP[lang])}"')
     return f'''<!DOCTYPE html>
 <html lang="{lang}">
@@ -247,7 +274,7 @@ def page_html(lang, page, main, m, ld=False, concepts=False, body_class=''):
 <!-- Back to top -->
 {bt}
 
-''' + ''.join(f'<script src="{s}"></script>\n' for s in scripts) + '''</body>
+''' + ''.join(f'<script src="{s}" defer></script>\n' for s in scripts) + '''</body>
 </html>
 '''
 
@@ -335,6 +362,87 @@ def services_full(lang):
 </section>
 '''
 
+def pricing(lang):
+    """Pricing section for the Services page: 3 package cards, comparison table, add-ons, audit box."""
+    from urllib.parse import quote
+    d = pricing_content.P[lang]
+    wa = lambda msg: WA + '?text=' + quote(msg, safe="-_.!~*'()")
+    cards = []
+    for i, t in enumerate(d['tiers']):
+        pop = t['id'] == 'growth'
+        lis = []
+        for f in t['feats']:
+            lead = f.startswith('*')
+            lis.append(f'          <li{" class=\"price-lead\"" if lead else ""}>{SH["check"]}<span>{esc(f.lstrip("*"))}</span></li>')
+        cards.append(f'''      <article class="price-card{' price-pop' if pop else ''} rev{delay(i)}" aria-labelledby="pt-{t['id']}">
+        {f'<span class="price-flag">{esc(d["popular"])}</span>' if pop else ''}
+        <h3 class="price-name" id="pt-{t['id']}">{esc(t['name'])}</h3>
+        <p class="price-tag">{esc(t['tag'])}</p>
+        <p class="price-amt"><span class="price-num">{esc(t['price'])}</span> <span class="price-unit">{esc(d['oneoff'])}</span></p>
+        <p class="price-meta"><span>{esc(t['meta'][0])}</span><span aria-hidden="true">·</span><span>{esc(t['meta'][1])}</span></p>
+        <ul class="price-list" role="list">
+{chr(10).join(lis)}
+        </ul>
+        <a href="{attr(wa(t['wa']))}" target="_blank" rel="noopener" class="{'btn-lime' if pop else 'btn-outline'} price-cta"{' data-magnetic' if pop else ''}>{esc(t['cta'])}</a>
+      </article>''')
+    def cell(v):
+        if v == 'Y': return f'<td><span class="pt-yes">{SH["check"]}<span class="sr-only">{esc(d["yes"])}</span></span></td>'
+        if v == 'N': return f'<td><span class="pt-no" aria-hidden="true">—</span><span class="sr-only">{esc(d["no"])}</span></td>'
+        return f'<td>{esc(v)}</td>'
+    th = ''.join(f'<th scope="col"{" class=\"pt-pop\"" if j == 1 else ""}>{esc(h)}</th>' for j, h in enumerate(d['head'][1:]))
+    rows = chr(10).join(f'          <tr><th scope="row">{esc(lab)}</th>{"".join(cell(v) for v in vals)}</tr>' for lab, vals in d['rows'])
+    prow = f'          <tr class="pt-total"><th scope="row">{esc(d["price_row"][0])}</th>{"".join(f"<td>{esc(v)}</td>" for v in d["price_row"][1])}</tr>'
+    addons = chr(10).join(f'''      <div class="addon rev{delay(i)}">
+        <h4 class="addon-name">{esc(a['name'])}</h4>
+        <p class="addon-desc">{esc(a['desc'])}</p>
+        <p class="addon-price">{f'<span class="addon-pre">{esc(a["pre"])}</span> ' if a['pre'] else ''}<strong>{esc(a['price'])}</strong>{f' <span class="addon-suf">{esc(a["suf"])}</span>' if a['suf'] else ''}</p>
+      </div>''' for i, a in enumerate(d['addons']))
+    au = d['audit']
+    return f'''<!-- PRICING -->
+<section id="pricing" aria-label="{attr(d['aria'])}">
+  <div class="container">
+    <div class="sh rev">
+      <div>
+        <span class="eyebrow">{esc(d['eyebrow'])}</span>
+        <h2>{esc(d['h'])}</h2>
+      </div>
+      <p>{esc(d['sub'])}</p>
+    </div>
+    <h3 class="price-sub rev">{esc(d['packages_h'])}</h3>
+    <div class="price-grid">
+{chr(10).join(cards)}
+    </div>
+    <h3 class="price-sub rev" id="pt-compare">{esc(d['compare_h'])}</h3>
+    <div class="price-table-wrap rev" role="region" aria-labelledby="pt-compare" tabindex="0">
+      <table class="price-table">
+        <caption class="sr-only">{esc(d['compare_aria'])}</caption>
+        <thead><tr><th scope="col">{esc(d['head'][0])}</th>{th}</tr></thead>
+        <tbody>
+{rows}
+{prow}
+        </tbody>
+      </table>
+    </div>
+    <h3 class="price-sub rev">{esc(d['addons_h'])}</h3>
+    <p class="price-sub-p rev">{esc(d['addons_sub'])}</p>
+    <div class="addon-grid">
+{addons}
+    </div>
+    <div class="price-audit rev">
+      <div>
+        <h3>{esc(au['h'])}</h3>
+        <p>{esc(au['p'])}</p>
+      </div>
+      <div class="price-audit-btns">
+        <a href="{url('contact', lang)}#offerta" class="btn-lime" data-magnetic>{esc(au['go'])}</a>
+        <a href="{WA}" target="_blank" rel="noopener" class="btn-outline">{esc(au['wa'])}</a>
+      </div>
+    </div>
+    <p class="price-note">{esc(d['note'])}</p>
+  </div>
+</section>
+'''
+
 WHO_ICONS = {  # lightweight inline icons (stroke = currentColor)
     'trades': '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
     'practices': '<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>',
@@ -378,7 +486,7 @@ def concept_card_link(lang, cid):
     note = f'\n            <p class="wcard-note">{esc(w["note"])}</p>' if w['note'] else ''
     return f'''      <a class="wcard" href="{c['url']}" target="_blank" rel="noopener">
         <div class="wcard-thumb">
-          <img src="/assets/projects/{cid}/hero.webp" alt="{attr(w['alt'] + ' — ' + t.split(' — ')[0])}" width="960" height="600" loading="lazy" decoding="async">
+          <img src="/assets/projects/{cid}/hero.webp" srcset="/assets/projects/{cid}/hero-480.webp 480w, /assets/projects/{cid}/hero-640.webp 640w, /assets/projects/{cid}/hero.webp 960w" sizes="(max-width: 680px) 70vw, (max-width: 1100px) 46vw, 390px" alt="{attr(w['alt'] + ' — ' + t.split(' — ')[0])}" width="960" height="600" loading="lazy" decoding="async">
           <span class="wcard-cat">Concept · {esc(c['niche'][lang])}</span>
           <div class="wcard-overlay">
             <div class="wcard-overlay-btn">{esc(w['view'])}</div>
@@ -397,7 +505,7 @@ def concept_card_split(lang, cid):
     note = f'\n            <p class="wcard-note">{esc(w["note"])}</p>' if w['note'] else ''
     return f'''      <article class="wcard wcard-split" data-concept="{cid}">
         <button type="button" class="wcard-thumb wcard-pick">
-          <img src="/assets/projects/{cid}/hero.webp" alt="{attr(w['alt'] + ' — ' + t.split(' — ')[0])}" width="960" height="600" loading="lazy" decoding="async">
+          <img src="/assets/projects/{cid}/hero.webp" srcset="/assets/projects/{cid}/hero-480.webp 480w, /assets/projects/{cid}/hero-640.webp 640w, /assets/projects/{cid}/hero.webp 960w" sizes="(max-width: 680px) 70vw, (max-width: 1100px) 46vw, 390px" alt="{attr(w['alt'] + ' — ' + t.split(' — ')[0])}" width="960" height="600" loading="lazy" decoding="async">
           <span class="wcard-cat">Concept · {esc(c['niche'][lang])}</span>
           <span class="wcard-overlay"><span class="wcard-overlay-btn">{esc(w['preview'])}</span></span>
         </button>
@@ -566,7 +674,7 @@ def build_home(lang):
     return page_html(lang, 'home', '\n'.join(parts), META['home'][lang], ld=True, concepts=True)
 
 def build_services(lang):
-    parts = [services_full(lang), per_chi(lang), fix_links(partial(lang, 'calculator'), lang), cta_banner(lang, quote=True)]
+    parts = [services_full(lang), pricing(lang), per_chi(lang), fix_links(partial(lang, 'calculator'), lang), cta_banner(lang, quote=True)]
     return page_html(lang, 'services', '\n'.join(parts), META['services'][lang])
 
 def build_work(lang):
@@ -604,19 +712,88 @@ def build_legal(lang, kind):
     return page_html(lang, page, main, m)
 
 
+def build_404():
+    main = '''<section class="page-first" id="notfound" aria-label="404" style="min-height:62vh">
+  <div class="container">
+    <div class="sh rev">
+      <div>
+        <span class="eyebrow">/ 404</span>
+        <h1>Page not found</h1>
+        <p>This page doesn't exist or has moved.</p>
+        <p lang="it">Questa pagina non esiste o è stata spostata.</p>
+        <p lang="fr">Cette page n'existe pas ou a été déplacée.</p>
+      </div>
+    </div>
+    <div class="sec-cta rev" style="justify-content:flex-start;gap:12px;flex-wrap:wrap">
+      <a class="btn-lime" href="/">English</a><a class="btn-outline" href="/it/">Italiano</a><a class="btn-outline" href="/fr/">Français</a>
+    </div>
+  </div>
+</section>
+'''
+    html = page_html('en', 'home', main, dict(title='Page not found | Upmarkpro', desc="This page doesn't exist or has moved."))
+    html = html.replace('content="index, follow"', 'content="noindex"')
+    html = re.sub(r'  <link rel="canonical"[^\n]*\n(?:  <link rel="alternate" hreflang[^\n]*\n)+', '', html)
+    html = re.sub(r'  <meta property="og:[^\n]*\n', '', html)
+    return html
+
+def build_llms():
+    """llms.txt: plain Markdown map of the site for language models (H1, summary, link lists)."""
+    lines = ['# Upmarkpro', '',
+             '> Upmarkpro designs websites, brand identities, Google visibility and Shopify stores for local businesses, professional practices and e-commerce, '
+             'working remotely with clients across Italy. The site is available in Italian, English and French.', '',
+             'Upmarkpro is run by Adem. The six sites shown in the Work section are concept projects made to demonstrate the approach for real industries; '
+             'they are not client work and they are not the official websites of the businesses they are based on.', '']
+    names = {'it': 'Italiano', 'en': 'English', 'fr': 'Français'}
+    for lang in ('it', 'en', 'fr'):
+        lines.append(f'## {names[lang]}')
+        for key in ('home', 'services', 'work', 'about', 'contact'):
+            label = FOOT[lang]['home'] if key == 'home' else NAV[lang][key]
+            lines.append(f'- [{label}]({BASE}{url(key, lang)}): {META[key][lang]["desc"]}')
+        lines.append('')
+    lines += ['## Contact', '- [Email](mailto:hello@upmarkpro.com): hello@upmarkpro.com', f'- [WhatsApp]({WA}): +39 388 257 6789', '',
+              '## Optional', f'- [Sitemap]({BASE}/sitemap.xml): every page with its language alternates']
+    for lang in ('it', 'en', 'fr'):
+        lines.append(f'- [{legal_content.C[lang]["privacy"]["title"]} ({lang.upper()})]({BASE}{url("privacy", lang)}): {legal_content.C[lang]["privacy"]["meta"]}')
+    return '\n'.join(lines) + '\n'
+
+HEADERS = '''# written by build.py
+# Fonts, vendor scripts and the fingerprinted site.js / concepts.js (?v=hash in the HTML) never change under the same URL.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/site.js
+  Cache-Control: public, max-age=31536000, immutable
+/assets/concepts.js
+  Cache-Control: public, max-age=31536000, immutable
+/assets/projects/*
+  Cache-Control: public, max-age=604800
+'''
+
 def build_all():
+    global CSS_MIN
     for f in STALE:
         p = os.path.join(ROOT, f)
         if os.path.exists(p): os.remove(p)
+    # shared assets first: pages inline the CSS and reference the fingerprinted scripts
+    CSS_MIN = minify('src/site.css')
+    js = minify('src/site.js')
+    write('assets/site.js', js); V['site'] = vhash(js)
+    data = {cid: dict(url=c['url'], **{l: dict(niche=c['niche'][l], title=c['title'][l]) for l in LANGS}) for cid, c in CONCEPTS.items()}
+    cj = '/* generated by build.py */\nwindow.CONCEPTS = ' + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + ';\n'
+    write('assets/concepts.js', cj); V['concepts'] = vhash(cj)
     n = 0
     for lang in LANGS:
         for key, fn in (('home', build_home), ('services', build_services), ('work', build_work), ('about', build_about), ('contact', build_contact)):
             write(out_path(key, lang), fn(lang)); n += 1
         write(out_path('privacy', lang), build_legal(lang, 'privacy')); n += 1
         write(out_path('cookies', lang), build_legal(lang, 'cookie')); n += 1
-    # concept data shared with site.js (hero niche switcher + device viewer)
-    data = {cid: dict(url=c['url'], **{l: dict(niche=c['niche'][l], title=c['title'][l]) for l in LANGS}) for cid, c in CONCEPTS.items()}
-    write('assets/concepts.js', '/* generated by build.py */\nwindow.CONCEPTS = ' + json.dumps(data, ensure_ascii=False, indent=1) + ';\n')
+    write('404.html', build_404())            # a real 404 page switches off Cloudflare's single-page-app fallback (missing files now return 404)
+    write('llms.txt', build_llms())
+    write('_headers', HEADERS)
     # sitemap with hreflang alternates
     rows = []
     for key in PUBLIC_PAGES:
@@ -626,7 +803,7 @@ def build_all():
             alts += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{BASE}{url(key, "en")}"/>'
             rows.append(f'  <url>\n    <loc>{BASE}{url(key, lang)}</loc>\n    <lastmod>2026-10-17</lastmod>\n    <changefreq>{freq}</changefreq>\n    <priority>{prio}</priority>{alts}\n  </url>')
     write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + '\n'.join(rows) + '\n</urlset>\n')
-    print(f'built {n} pages, assets/concepts.js, sitemap.xml ({len(rows)} urls)')
+    print(f'built {n} pages + 404.html, llms.txt, _headers, sitemap.xml ({len(rows)} urls); css {len(CSS_MIN)//1024} KB inline, site.js {len(js)//1024} KB (v={V["site"]})')
 
 
 if __name__ == '__main__':
