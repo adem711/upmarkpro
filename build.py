@@ -538,6 +538,51 @@ def work_featured(lang):
 </section>
 '''
 
+def redesign(lang):
+    """Interactive before/after of a real website redesign: browser-frame mockup + range input driving --pos."""
+    d = REDESIGN[lang]
+    base = '/assets/projects/taddia/site-'
+    def img(kind, cls):
+        return (f'<img class="{cls}" src="{base}{kind}.webp" srcset="{base}{kind}-640.webp 640w, {base}{kind}-960.webp 960w, {base}{kind}.webp 1440w" '
+                f'sizes="(min-width:1100px) 1100px, 94vw" alt="" width="1440" height="900" loading="lazy" decoding="async">')
+    hl = '\n'.join(f'      <li class="rd-hl rev{delay(i)}"><span class="rd-hl-k">{esc(k)}</span><p>{esc(t)}</p></li>' for i, (k, t) in enumerate(d['hl']))
+    return f'''<!-- REDESIGN BEFORE / AFTER -->
+<section id="redesign" aria-labelledby="redesign-h">
+  <div class="container">
+    <div class="sh rev">
+      <div>
+        <span class="eyebrow">{esc(d['eyebrow'])}</span>
+        <h2 id="redesign-h">{esc(d['h'])}</h2>
+        <p>{esc(d['intro'])}</p>
+      </div>
+    </div>
+    <div class="rd-browser">
+      <div class="rd-bar" aria-hidden="true">
+        <span class="rd-dots"><i></i><i></i><i></i></span>
+        <span class="rd-url"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{esc(d['url'])}</span>
+      </div>
+      <div class="ba" data-ba data-vt="{attr(d['vt'])}" role="group" aria-label="{attr(d['group'])}">
+        <div class="ba-frame">
+          {img('after', 'ba-img')}
+          {img('before', 'ba-img ba-img--before')}
+          <span class="ba-tag ba-tag--before" aria-hidden="true">{esc(d['tag_before'])}</span>
+          <span class="ba-tag ba-tag--after" aria-hidden="true">{esc(d['tag_after'])}</span>
+          <span class="ba-handle" aria-hidden="true"><span></span></span>
+          <input class="ba-range" type="range" min="0" max="100" step="1" value="50" aria-label="{attr(d['label'])}">
+        </div>
+      </div>
+    </div>
+    <ul class="rd-hls" role="list">
+{hl}
+    </ul>
+    <div class="rd-actions rev">
+      <a href="{REDESIGN_URL}" target="_blank" rel="noopener" class="btn-lime" data-magnetic>{esc(d['btn'])} <span aria-hidden="true">↗</span></a>
+      <p class="rd-note">{esc(d['note'])}</p>
+    </div>
+  </div>
+</section>
+'''
+
 def work_page(lang):
     w = WORK_UI[lang]
     cards = '\n'.join(concept_card_split(lang, cid) for cid in CONCEPTS)
@@ -563,7 +608,7 @@ def work_page(lang):
     </div>
   </div>
 </section>
-'''
+{redesign(lang)}'''
 
 def bio_parts(lang):
     ap = partial(lang, 'approach')
@@ -741,8 +786,8 @@ def build_llms():
     lines = ['# Upmarkpro', '',
              '> Upmarkpro designs websites, brand identities, Google visibility and Shopify stores for local businesses, professional practices and e-commerce, '
              'working remotely with clients across Italy. The site is available in Italian, English and French.', '',
-             'Upmarkpro is run by Adem. The six sites shown in the Work section are concept projects made to demonstrate the approach for real industries; '
-             'they are not client work and they are not the official websites of the businesses they are based on.', '']
+             'Upmarkpro is run by Adem. The six concept sites in the Work section demonstrate the approach for real industries; they are not client work and '
+             'they are not the official websites of the businesses they are based on. Upmarkpro\'s first client project, a website redesign for Studio Dentistico Dott. Taddia in Novara, is shown separately on the same page.', '']
     names = {'it': 'Italiano', 'en': 'English', 'fr': 'Français'}
     for lang in ('it', 'en', 'fr'):
         lines.append(f'## {names[lang]}')

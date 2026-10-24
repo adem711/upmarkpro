@@ -234,24 +234,56 @@ CONCEPTS = {  # id -> data (order = display order on the Work page)
 FEATURED = ['bilelcoiff', 'digitalpower', 'dental']      # shown on the home page
 WORK_UI = {
     'en': dict(aria='Concept projects', eyebrow='/ Portfolio', h='Concept projects',
-               intro="Sites built to show our approach for real industries. Our first clients' projects will appear here.",
+               intro='Concept sites built to show our approach for real industries, and below them our first client project: a website redesign for a dental practice in Novara.',
                count='6 concept projects · 6 industries', view='View concept ↗', view_plain='View concept', note=None,
                preview='Preview ↑', pick=lambda t: f'Preview {t} in the viewer', alt='Preview of the concept site',
                disclaimer="Concept projects — built to show our approach on real industries. They are not client work and are not the official websites of the businesses they are based on.",
                all='View all 6 concept projects →', viewer='Concept site viewer', list_h='All concept projects'),
     'fr': dict(aria='Projets démonstratifs', eyebrow='/ Portfolio', h='Projets démonstratifs',
-               intro='Des sites créés pour montrer notre méthode sur des secteurs réels. Les projets de nos premiers clients apparaîtront ici.',
+               intro="Des sites concept créés pour montrer notre méthode sur des secteurs réels, et en dessous notre premier projet client : la refonte du site d'un cabinet dentaire à Novare.",
                count='6 projets démonstratifs · 6 secteurs', view='Voir le concept ↗', view_plain='Voir le concept', note=None,
                preview='Aperçu ↑', pick=lambda t: f'Voir {t} dans la visionneuse', alt='Aperçu du site concept',
                disclaimer="Projets démonstratifs — créés pour montrer notre méthode sur des secteurs réels. Ce ne sont ni des projets clients ni les sites officiels des entreprises dont ils s'inspirent.",
                all='Voir les 6 projets démonstratifs →', viewer='Visionneuse des sites concept', list_h='Tous les projets démonstratifs'),
     'it': dict(aria='Progetti dimostrativi', eyebrow='/ Portfolio', h='Progetti dimostrativi',
-               intro='Siti realizzati per mostrare il nostro metodo su settori reali. I primi clienti in Italia avranno qui il loro progetto.',
+               intro="Siti concept realizzati per mostrare il nostro metodo su settori reali e, più sotto, il nostro primo progetto per un cliente: il restyling del sito di uno studio dentistico a Novara.",
                count='6 progetti dimostrativi · 6 settori', view='Vedi il concept ↗', view_plain='Vedi il concept', note='Sito in francese',
                preview='Anteprima ↑', pick=lambda t: f'Mostra {t} nel visualizzatore', alt='Anteprima del sito concept',
                disclaimer="Progetti dimostrativi — realizzati per mostrare il nostro metodo su settori reali. Non sono lavori per clienti né i siti ufficiali delle attività a cui si ispirano.",
                all='Vedi tutti i 6 progetti dimostrativi →', viewer='Visualizzatore dei siti concept', list_h='Tutti i progetti dimostrativi'),
 }
+
+# Website redesign before/after (Work page). Scores are Lighthouse (mobile) measured on the live versions on 2026-10-24: old 60-76, new 96-97.
+REDESIGN = {
+    'en': dict(aria='Website redesign: before and after', eyebrow='/ Client project', h='Dental practice redesign: before and after',
+               intro='Studio Dentistico Dott. Taddia, Novara. Drag the divider, or use the arrow keys, to compare the old website with the new one.',
+               tag_before='Before · Old site (2021)', tag_after='After · New site (2026)', url='dentistanovarataddia.it',
+               group='Comparison of the old (2021) and new (2026) website of Studio Dentistico Dott. Taddia',
+               label='Move to compare the old and the new website', vt='Before {a}%, after {b}%',
+               hl=[('Performance', 'Lighthouse performance on mobile went from 60–76 to 96–97 out of 100.'),
+                   ('Bookings', 'Quick booking through WhatsApp, with call buttons always within reach.'),
+                   ('Design', 'A modern, professional layout built mobile-first.')],
+               btn='View the live redesign', note='Home page screenshots at 1440 px. Lighthouse scores measured on 24 October 2026 on the live versions of both sites; they vary slightly from one run to the next.'),
+    'fr': dict(aria='Refonte de site : avant et après', eyebrow='/ Projet client', h="Refonte d'un cabinet dentaire : avant et après",
+               intro="Studio Dentistico Dott. Taddia, Novare. Faites glisser le curseur, ou utilisez les flèches du clavier, pour comparer l'ancien site et le nouveau.",
+               tag_before='Avant · Ancien site (2021)', tag_after='Après · Nouveau site (2026)', url='dentistanovarataddia.it',
+               group="Comparaison de l'ancien site (2021) et du nouveau site (2026) du Studio Dentistico Dott. Taddia",
+               label="Déplacer pour comparer l'ancien et le nouveau site", vt='Avant {a} %, après {b} %',
+               hl=[('Performance', 'Le score de performance Lighthouse sur mobile est passé de 60–76 à 96–97 sur 100.'),
+                   ('Rendez-vous', "Prise de rendez-vous rapide via WhatsApp, avec des boutons d'appel toujours à portée de main."),
+                   ('Design', "Une mise en page moderne, professionnelle et pensée d'abord pour le mobile.")],
+               btn='Voir la refonte en ligne', note="Captures de la page d'accueil à 1440 px. Scores Lighthouse mesurés le 24 octobre 2026 sur les versions en ligne des deux sites ; ils varient légèrement d'une mesure à l'autre."),
+    'it': dict(aria='Restyling di un sito: prima e dopo', eyebrow='/ Progetto cliente', h='Restyling Studio Dentistico: Prima e Dopo',
+               intro='Studio Dentistico Dott. Taddia, Novara. Trascina il cursore, oppure usa le frecce della tastiera, per confrontare il vecchio sito con il nuovo.',
+               tag_before='Prima · Vecchio sito (2021)', tag_after='Dopo · Nuovo sito (2026)', url='dentistanovarataddia.it',
+               group='Confronto tra il vecchio sito (2021) e il nuovo sito (2026) dello Studio Dentistico Dott. Taddia',
+               label='Sposta per confrontare il vecchio e il nuovo sito', vt='Prima {a}%, dopo {b}%',
+               hl=[('Prestazioni', 'Su mobile il punteggio Lighthouse di prestazioni è passato da 60–76 a 96–97 su 100.'),
+                   ('Prenotazioni', 'Prenotazione rapida con WhatsApp e pulsanti di chiamata sempre a portata di mano.'),
+                   ('Design', 'Layout moderno, professionale e ottimizzato per dispositivi mobili.')],
+               btn='Vedi il nuovo sito', note="Schermate della home page a 1440 px. Punteggi Lighthouse misurati il 24 ottobre 2026 sulle versioni online dei due siti; variano leggermente da una misurazione all'altra."),
+}
+REDESIGN_URL = 'https://dentistanovarataddia.vercel.app/'
 
 # ───────────────────────── about / faq / offer / cta ─────────────────────────
 ABOUT_UI = {
@@ -261,7 +293,7 @@ ABOUT_UI = {
 }
 FIRST_CLIENTS = {  # Italian market only
     'it': dict(h='Prezzo dedicato ai primi clienti in Italia',
-               p="Stiamo iniziando in Italia e cerchiamo i primi 3 clienti. Per loro c'è un prezzo ridotto, in cambio di una recensione su Google e del permesso di mostrare il progetto qui.",
+               p="Il primo progetto è lo Studio Dentistico Dott. Taddia di Novara. Restano 2 posti tra i primi 3 clienti, con un prezzo ridotto: in cambio chiediamo una recensione su Google e il permesso di mostrare il progetto qui.",
                aria='Primi clienti'),
 }
 FAQ = {
@@ -271,21 +303,21 @@ FAQ = {
         ('Do you only work in my city?', 'No, we work remotely with businesses across Italy.'),
         ('Do I have to do anything?', 'Very little: you send us photos, services and information about your business. We take care of the rest.'),
         ('What happens after delivery?', 'We show you how to update the basic information and stay available for changes and questions.'),
-        ('Are the projects shown client work?', "No, they are concept projects built to show our work on real industries. Our first clients' projects will appear here.")]),
+        ('Are the projects shown client work?', 'The six concept projects are not client work: they show our approach on real industries. Our first client project, a dental practice redesign, is shown separately on the Work page.')]),
     'fr': dict(aria='Questions fréquentes', eyebrow='/ FAQ', h='Questions fréquentes', qa=[
         ('Combien coûte un site ?', "Nos offres démarrent à 490 € pour un site d'une page, à prix fixe validé avant de commencer : voir les tarifs sur la page Services. Pour un besoin différent, nous vous envoyons un devis clair après un court appel, sans engagement."),
         ('En combien de temps est-il prêt ?', "Cela dépend du projet : nous vous l'indiquons dans le devis, avant de commencer."),
         ('Travaillez-vous seulement dans ma ville ?', "Non, nous travaillons à distance avec des entreprises dans toute l'Italie."),
         ('Dois-je faire quelque chose ?', "Peu : vous nous envoyez photos, services et informations sur votre activité. Nous nous occupons du reste."),
         ('Que se passe-t-il après la livraison ?', 'Nous vous expliquons comment mettre à jour les informations de base et restons disponibles pour les modifications et les questions.'),
-        ('Les projets présentés sont-ils des projets clients ?', 'Non, ce sont des projets démonstratifs créés pour montrer notre travail sur des secteurs réels. Les projets de nos premiers clients apparaîtront ici.')]),
+        ('Les projets présentés sont-ils des projets clients ?', "Les six projets démonstratifs ne sont pas des projets clients : ils montrent notre méthode sur des secteurs réels. Notre premier projet client, la refonte d'un cabinet dentaire, est présenté à part sur la page Projets.")]),
     'it': dict(aria='Domande frequenti', eyebrow='/ FAQ', h='Domande frequenti', qa=[
         ('Quanto costa un sito?', 'I nostri pacchetti partono da €490 per un sito di una pagina, con prezzo fisso concordato prima di iniziare: trovi i prezzi nella pagina Servizi. Per esigenze diverse, dopo una breve chiamata ti mandiamo un preventivo chiaro, senza impegno.'),
         ('In quanto tempo è pronto?', 'Dipende dal progetto: te lo indichiamo nel preventivo, prima di iniziare.'),
         ('Lavorate solo nella mia città?', 'No, lavoriamo a distanza con attività in tutta Italia.'),
         ('Devo fare qualcosa io?', 'Poco: ci mandi foto, servizi e informazioni sulla tua attività. Al resto pensiamo noi.'),
         ('Cosa succede dopo la consegna?', 'Ti spieghiamo come aggiornare le informazioni base e restiamo disponibili per modifiche e domande.'),
-        ('I progetti mostrati sono di clienti?', 'No, sono progetti dimostrativi realizzati per mostrare il nostro lavoro su settori reali. I primi clienti italiani avranno qui il loro progetto.')]),
+        ('I progetti mostrati sono di clienti?', 'I sei progetti dimostrativi non sono lavori per clienti: mostrano il nostro metodo su settori reali. Il nostro primo progetto per un cliente, il restyling di uno studio dentistico, è presentato a parte nella pagina Progetti.')]),
 }
 OFFER = {
     'en': dict(aria='Free audit', eyebrow='/ Free audit', h='Free audit of your online presence.',

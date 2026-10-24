@@ -604,6 +604,21 @@ if (calcExport) calcExport.addEventListener('click', () => {
   wrap.addEventListener('click', e => { const b = e.target.closest('.hn-pill'); if (b) go(b.dataset.niche); });
 })();
 
+/* ── Redesign before/after: the range input drives --pos (CSS) and the spoken value ── */
+(function initBeforeAfter() {
+  document.querySelectorAll('[data-ba]').forEach(root => {
+    const range = root.querySelector('.ba-range');
+    if (!range) return;
+    const sync = () => {
+      const v = Number(range.value);
+      root.style.setProperty('--pos', v + '%');
+      range.setAttribute('aria-valuetext', root.dataset.vt.replace('{a}', v).replace('{b}', 100 - v));
+    };
+    range.addEventListener('input', sync);
+    sync();
+  });
+})();
+
 /* ── Init ── */
 calcUpdate();
 setTimeout(() => {
